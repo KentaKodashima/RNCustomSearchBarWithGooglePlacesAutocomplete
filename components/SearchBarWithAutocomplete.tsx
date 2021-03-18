@@ -6,10 +6,15 @@ import {
   ViewStyle
 } from 'react-native'
 
+import { PredictionType } from '../App'
+
 type SearchBarProps = {
   value: string
   style?: ViewStyle | ViewStyle[]
   onChangeText: (text: string) => void
+  predictions: PredictionType[]
+  showPredictions: boolean
+  onPredictionTapped: (placeId: string, description: string) => void
 }
 
 const SearchBarWithAutocomplete: FunctionComponent<SearchBarProps> = props => {
