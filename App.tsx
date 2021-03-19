@@ -27,7 +27,7 @@ export type PredictionType = {
 }
 
 const App = () => {
-  const [search, setSearch] = useState({ term: '' })
+  const [search, setSearch] = useState({ term: '', fetchPredictions: false })
   const [showPredictions, setShowPredictions] = useState(false)
   const [predictions, setPredictions] = useState<PredictionType[]>(null)
 
@@ -39,9 +39,8 @@ const App = () => {
    * API details: https://developers.google.com/maps/documentation/places/web-service/autocomplete
   */
   const onChangeText = async (text: string) => {
-    setSearch({ term: text })
     if (search.term.trim() === '') return
-    if (!showPredictions) return
+    if (!search.fetchPredictions) return
 
     const apiUrl = `${GOOGLE_PACES_API_BASE_URL}/autocomplete/json?key=${env.GOOGLE_API_KEY}&input=${search.term}`
     try {
@@ -51,6 +50,7 @@ const App = () => {
       })
       if (result) {
         const { data: { predictions } } = result
+        console.log(predictions)
         setPredictions(predictions)
         setShowPredictions(true)
       }
@@ -76,7 +76,7 @@ const App = () => {
         const { data: { result: { geometry: { location } } } } = result
         const { lat, lng } = location
         setShowPredictions(false)
-        setSearch({ term: description })
+        setSearch({ term: description, fetchPredictions: false })
       }
     } catch (e) {
       console.log(e)
@@ -90,7 +90,10 @@ const App = () => {
         <View style={body}>
           <SearchBarWithAutocomplete
             value={search.term}
-            onChangeText={(text) => onChangeText(text)}
+            onChangeText={(text) => {
+              setSearch({ term: text, fetchPredictions: true })
+              onChangeText(text)
+            }}
             showPredictions={showPredictions}
             predictions={predictions}
             onPredictionTapped={onPredictionTapped}
