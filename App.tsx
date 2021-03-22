@@ -35,7 +35,7 @@ const App = () => {
 
   /**
    * Grab predictions on entering text
-   *    by sending reqyest to Google Maps API.
+   *    by sending reqyest to Google Places API.
    * API details: https://developers.google.com/maps/documentation/places/web-service/autocomplete
   */
   const onChangeText = async (text: string) => {
