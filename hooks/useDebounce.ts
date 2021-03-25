@@ -21,7 +21,7 @@ export const useDebounce = (
    * useEffect gets re-called whenever "callback" changes.
    * You can add "delay" to the second argument array,
    *    if you want to change "delay" dynamically.
-  */
+   * */
   useEffect(() => {
     // Call the memoized version of callback after the delay
     const handler = setTimeout(() => {

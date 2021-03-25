@@ -9,6 +9,7 @@ import axios from 'axios'
 
 import { env } from './env'
 import SearchBarWithAutocomplete from './components/SearchBarWithAutocomplete'
+import { useDebounce } from './hooks/useDebounce'
 
 const GOOGLE_PACES_API_BASE_URL = 'https://maps.googleapis.com/maps/api/place'
 
@@ -29,7 +30,7 @@ export type PredictionType = {
 const App = () => {
   const [search, setSearch] = useState({ term: '', fetchPredictions: false })
   const [showPredictions, setShowPredictions] = useState(false)
-  const [predictions, setPredictions] = useState<PredictionType[]>(null)
+  const [predictions, setPredictions] = useState<PredictionType[]>([])
 
   const { container, body } = styles
 
@@ -38,7 +39,7 @@ const App = () => {
    *    by sending reqyest to Google Places API.
    * API details: https://developers.google.com/maps/documentation/places/web-service/autocomplete
   */
-  const onChangeText = async (text: string) => {
+  const onChangeText = async () => {
     if (search.term.trim() === '') return
     if (!search.fetchPredictions) return
 
@@ -50,7 +51,6 @@ const App = () => {
       })
       if (result) {
         const { data: { predictions } } = result
-        console.log(predictions)
         setPredictions(predictions)
         setShowPredictions(true)
       }
@@ -58,6 +58,7 @@ const App = () => {
       console.log(e)
     }
   }
+  useDebounce(onChangeText, 1000, [search.term])
 
   /**
    * Grab lattitude and longitude on prediction tapped
@@ -92,7 +93,6 @@ const App = () => {
             value={search.term}
             onChangeText={(text) => {
               setSearch({ term: text, fetchPredictions: true })
-              onChangeText(text)
             }}
             showPredictions={showPredictions}
             predictions={predictions}
